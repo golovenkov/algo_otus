@@ -75,20 +75,16 @@ def build_heap(a, heap_size):
     return count
 
 
-def heap_sort(b):
-    """Heap sort (not in place). Return sorted array and a number of operations"""
-    res = []
+def heap_sort(a):
+    """Heap sort in place. Return sorted array and a number of operations"""
     count = 0
-
-    a = list(b)
     heap_size = len(a)
     count += build_heap(a, heap_size)  # first, build the heap
     for i in range(len(a) - 1, 0, -1):
-        res.append(a[0])
         swap(a, 0, i)                            # swap a[0] and a[-1]
         heap_size -= 1
         count += max_heapify(a, heap_size, 0)   # rebuild the heap
-    return res[::-1], count
+    return count
 
 
 def main():
@@ -114,11 +110,11 @@ def main():
     # 3. Heap Sort
     a = list(a_shuffled)
     # print("[heap_sort] a:\t\t%s" % a)
-    res, count = heap_sort(a)
-    # print("[heap_sort] sorted:\t%s" % res)
+    count = heap_sort(a)
+    # print("[heap_sort] sorted:\t%s" % a)
     print("[heap_sort] count: %d" % count)
 
-    assert_sort_asc(res)
+    assert_sort_asc(a)
 
 
 if __name__ == "__main__":
@@ -127,6 +123,6 @@ if __name__ == "__main__":
     # Example results:
     #
     # heap_length: 20480
-    # [max_heapify] count: 14
-    # [build_heap] count: 25348
-    # [heap_sort] count: 285543
+    # [max_heapify] count: 8
+    # [build_heap] count: 25534
+    # [heap_sort] count: 285964
