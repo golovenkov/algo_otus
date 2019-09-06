@@ -2,46 +2,45 @@ import random
 import math
 
 
-def assert_sort_asc(a):
-    for i in range(1, len(a)):
-        assert a[i] >= a[i - 1]
+def assert_sort_asc(array):
+    """Test the array to being sorted"""
+    for i in range(1, len(array)):
+        assert array[i] >= array[i - 1]
 
 
-def print_heap(a):
+def print_heap(heap):
     """Print heap as a tree"""
-    h = int(math.log(len(a), 2)) + 1
+    height = int(math.log(len(heap), 2)) + 1
     k = 0
-    for i in range(h):
-        line = "".join([" " for j in range(int(2 ** (h - i)))])
-        delimeter = "".join([" "] * (2 ** (h - i)))
-        line = line + delimeter.join([str(j) for j in a[k:k + int(2**i)]])
+    for level in range(height):
+        line = "".join([" " for j in range(int(2 ** (height - level)))])
+        delimeter = "".join([" "] * (2 ** (height - level)))
+        line = line + delimeter.join([str(j) for j in heap[k:k + int(2**level)]])
         print(line)
-        k += int(2**i)
+        k += int(2**level)
 
 
-def parent(i):
+def parent(node_index):
     """Find the index of a parent"""
-    return (i + 1) // 2 - 1
+    return (node_index + 1) // 2 - 1
 
 
-def left(i):
+def left(node_index):
     """Find the index of a left child"""
-    return (i + 1) * 2 - 1
+    return (node_index + 1) * 2 - 1
 
 
-def right(i):
+def right(node_index):
     """Find the index of a right child"""
-    return (i + 1) * 2
+    return (node_index + 1) * 2
 
 
-def swap(a, i, j):
-    """Swap 2 elements in place """
-    tmp = a[i]
-    a[i] = a[j]
-    a[j] = tmp
+def swap(array, first_idx, second_idx):
+    """Swap 2 elements with indexes `first_idx` and `second_idx` in place """
+    array[first_idx], array[second_idx] = array[second_idx], array[first_idx]
 
 
-def max_heapify(a, heap_size, i):
+def max_heapify(array, heap_size, i):
     """Drown the element at index `i` if needed. Return a number of operations"""
     count = 1
 
@@ -49,41 +48,41 @@ def max_heapify(a, heap_size, i):
     r = right(i)
 
     largest_index = i
-    if l < heap_size:
-        if a[l] > a[i]:
+    if l < heap_size and array[l] > array[i]:
             largest_index = l
 
-    if r < heap_size:
-        if a[r] > a[largest_index]:
+    if r < heap_size and array[r] > array[largest_index]:
             largest_index = r
 
-    # print(a, i, l, r, largest_index)
+    # print(heap, i, l, r, largest_index)
     if largest_index != i:
-        swap(a, i, largest_index)
-        count += max_heapify(a, heap_size, largest_index)
+        swap(array, i, largest_index)
+        count += max_heapify(array, heap_size, largest_index)
 
     return count
 
 
-def build_heap(a, heap_size):
+def build_heap(array, heap_size):
     """Build a heap from unsorted array in place. Return a number of operations"""
     count = 0
-    for i in range(len(a) // 2 - 1, -1, -1):
-        # print("========================\ni: %d, a[i]:%d" % (i, a[i]))
-        count += max_heapify(a, heap_size, i)
-        # print_heap(a)
+    # Iterate over all non-leaves (nodes with at least one child) in reverse order
+    for i in range(len(array) // 2 - 1, -1, -1):
+        # print("========================\ni: %d, array[i]:%d" % (i, array[i]))  # DEBUG
+        count += max_heapify(array, heap_size, i)
+        # print_heap(array)   # DEBUG
     return count
 
 
-def heap_sort(a):
-    """Heap sort in place. Return sorted array and a number of operations"""
-    count = 0
-    heap_size = len(a)
-    count += build_heap(a, heap_size)  # first, build the heap
-    for i in range(len(a) - 1, 0, -1):
-        swap(a, 0, i)                            # swap a[0] and a[-1]
+def heap_sort(array):
+    """Heap sort the `array` in place. Return a number of operations"""
+    heap_size = len(array)
+    count = build_heap(array, heap_size)  # first, build the heap
+    for i in range(heap_size - 1, 0, -1):
+        # Remove the first (and the largest) element from the heap, then replace it with the last element. 
+        # This operation is implemented as swaping of two elements and decreasing heap size by one
+        swap(array, 0, i) 
         heap_size -= 1
-        count += max_heapify(a, heap_size, 0)   # rebuild the heap
+        count += max_heapify(array, heap_size, 0)    # rebuild the heap
     return count
 
 
@@ -113,7 +112,7 @@ def main():
     count = heap_sort(a)
     # print("[heap_sort] sorted:\t%s" % a)
     print("[heap_sort] count: %d" % count)
-
+    # print_heap(a)
     assert_sort_asc(a)
 
 
